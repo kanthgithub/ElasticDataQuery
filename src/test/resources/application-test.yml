@@ -1,0 +1,26 @@
+server:
+  port: 0
+
+spring:
+  data:
+    elasticsearch:
+      cluster-name: testCluster
+      cluster-nodes: localhost:9700
+      host: localhost
+      port: 9700
+      repositories:
+        enabled: true
+      properties:
+        http:
+          enabled: true
+
+xpack:
+  security:
+    enabled: false
+
+search:
+  queryLimitInHours: 24
+
+file:
+  data:
+    directory: ./testdata/

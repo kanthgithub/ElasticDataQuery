@@ -19,8 +19,12 @@ public class FileDataRepositoryImpl implements  FileDataRepositoryCustom {
 
     Logger log = LoggerFactory.getLogger(FileDataRepositoryImpl.class);
 
-    @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
+
+    @Autowired
+    public FileDataRepositoryImpl(ElasticsearchTemplate elasticsearchTemplate) {
+        this.elasticsearchTemplate = elasticsearchTemplate;
+    }
 
     /**
      * match by word Content
