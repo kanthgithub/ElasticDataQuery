@@ -31,24 +31,27 @@ Purpose:
 
 Full-Text query to be performed to analyse text Data and generate analytics based on text match and timestamps
 
-Tech-Stack:
+# Tech-Stack:
 
-JDK-8 for core programming
+- JDK-8 for core programming
 
-Spring-Boot for Service/Repository management and interaction with Elastic-Engine
+- Spring-Boot for Service/Repository management and interaction with Elastic-Engine
 
-Spring-elastic-data manages all dependencies with Elastic-Search Component
+- Spring-elastic-data manages all dependencies with Elastic-Search Component
 
-Mockito and Junit for Unit-Testing
+- Mockito and Junit for Unit-Testing
 
-Embedded-Elastic-Search for Integration Testing
+- Embedded-Elastic-Search for Integration Testing
 
-Swagger to generate documentation for Service-Endpoint and Request/Response Details
+- Swagger to generate documentation for Service-Endpoint and Request/Response Details
 
-Functional Flow:
+# Functional Flow:
 
-
-
+- Provides an API endpoint: http://localhost:<port>/isStringValid?string={string}
+- The caller can only send a string of up to 40 characters
+- The API shall return a json in this format: ​{“response”: “true|false”}
+    - If the string appears more than 5 times in the last 24 hours, return​ {“response”: “false”}
+    - Else return ​{“response”: “true”}
 
 
 Technical Flow:
@@ -82,11 +85,11 @@ File Watcher tests:
 
 
 
-Integration Testing:
+# Integration Testing:
 
 ** Pending
 
-Reason: Embedded Elastic-Engine has issues in compatibility with Spring Dependencies
+ - Reason: Embedded Elastic-Engine has issues in compatibility with Spring Dependencies
 
 Followup: Develop a maven plugin which starts/stops the Elastic-Engine for each integration test
 
