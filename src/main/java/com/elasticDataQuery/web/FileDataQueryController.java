@@ -14,7 +14,6 @@ import javax.validation.constraints.Size;
 import java.util.List;
 
 @RestController
-@RequestMapping("/fileData")
 @Validated
 public class FileDataQueryController {
 
@@ -48,8 +47,8 @@ public class FileDataQueryController {
      *
      * @return all FileData entities recorded in elasticSearch - with matching content (input argument)
      */
-    @RequestMapping(path="/{word}", method = RequestMethod.GET)
-    public ResponseEntity<List<FileData>> getAllFileDataEntitiesFilteredByWord(@PathVariable String word)  {
+    @RequestMapping(path="/word", method = RequestMethod.GET)
+    public ResponseEntity<List<FileData>> getAllFileDataEntitiesFilteredByWord(@RequestParam String word)  {
 
         List<FileData> fileDataList = fileDataQueryService.findByContent(word);
 
@@ -64,8 +63,8 @@ public class FileDataQueryController {
      *
      * @return all FileData entities recorded in elasticSearch - with matching content (input argument)
      */
-    @RequestMapping(path="/{word}/{timeInHours}", method = RequestMethod.GET)
-    public ResponseEntity<List<FileData>> getAllRankedFileDataEntitiesFilteredByWord(@PathVariable String word,@PathVariable String timeInHours)  {
+    @RequestMapping(path="/wordAndRank", method = RequestMethod.GET)
+    public ResponseEntity<List<FileData>> getAllRankedFileDataEntitiesFilteredByWord(@RequestParam String word,@RequestParam String timeInHours)  {
 
         List<FileData> fileDataList = fileDataQueryService.findByContentAndTimeLimit(word,Long.valueOf(timeInHours));
 
@@ -79,8 +78,8 @@ public class FileDataQueryController {
      * @param timeInHours
      * @return aggregated stats for matching words ranked by timeDelta
      */
-    @RequestMapping(path="/stats/{word}/{timeInHours}", method = RequestMethod.GET)
-    public ResponseEntity<Long> getStatsByWordAndTimeRank(@PathVariable String word,@PathVariable String timeInHours)  {
+    @RequestMapping(path="/stats", method = RequestMethod.GET)
+    public ResponseEntity<Long> getStatsByWordAndTimeRank(@RequestParam("string") @Size(min= 1, max = 40 , message = "string length must be between 1 and 40") String word,@RequestParam String timeInHours)  {
 
         Long stats = fileDataQueryService.getStatsAggregationDataAndTimeRank(word,Long.valueOf(timeInHours));
 
