@@ -64,42 +64,115 @@ API to query the Log-File Data from Elastic-Search-Engine
 
 Technical Flow:
 
+ - REST endpoint defined in :
+
+   ```
+   FileDataQueryController (com/elasticDataQuery/web)
+   ```
+
+ - Query Service to query Elastic-Search engine and get aggregated, ranked and validated data:
+
+   ```
+   FileDataQueryServiceImpl (com/elasticDataQuery/service)
+   ```
+
+   ```java
+
+       @Override
+       public Long getStatsAggregationDataAndTimeRank(String word, Long deltaTimeInHours) {
+           List<FileData> fileDataList = findByContentAndTimeLimit(word,deltaTimeInHours);
+
+           return !CollectionUtils.isEmpty(fileDataList) ? Long.valueOf(fileDataList.size()) : 0;
+       }
+
+       /**
+        * @param word
+        * @param deltaTimeInHours
+        * @return Boolean
+        */
+       @Override
+       public Boolean validateStringRank(String word, Long deltaTimeInHours) {
+           Long stats = getStatsAggregationDataAndTimeRank(word,deltaTimeInHours);
+
+           return stats == null || stats<=5;
+       }
+
+   ```
+
+- Elastic-Search DSL in repository:
+
+  ```
+  FileDataRepositoryImpl (com/elasticDataQuery/repository)
+  ```
+
+  1. QueryBuilder builds the query to search based on:
+
+      - exact match of string
+      - timeStampInEpoch (milliseconds) which is a pasttime (as we need to do a search for 24 Hours)
+      - Beauty in elastic-search is that when this is running on cluster, query will become a distributed query
+      - No programmatic handling of designing or running distributed query
+
+  ```java
+
+      /**
+       *
+       * @param word
+       * @param deltaTimeInHours
+       * @return QueryBuilder
+       */
+      public QueryBuilder getQueryBuilderForContentAndTimeRank(String word, Long deltaTimeInHours) {
+
+          Long pastTimeInEpochMillis = DateTimeUtil.convertPastTimeInHoursToEpochMillis(deltaTimeInHours.intValue());
+
+          log.info("pastTimeInEpochMillis : {} for Hours: {}",pastTimeInEpochMillis,deltaTimeInHours);
+
+          return QueryBuilders.boolQuery()
+                  .must(QueryBuilders.matchPhraseQuery("content", word))
+                  .must(QueryBuilders.rangeQuery("timestampInEpoch").gte(pastTimeInEpochMillis));
+      }
+
+      /**
+       *
+       * @param word
+       * @return QueryBuilder
+       */
+      public QueryBuilder getQueryBuilderForContent(String word) {
+
+          return QueryBuilders.boolQuery()
+                  .must(QueryBuilders.matchPhraseQuery("content", word));
+      }
+
+  ```
 
 
-UML:
+## UML:
 
 
 
 
 
+## Test Details:
 
-Test Details:
+### Unit Testing:
 
-Unit Testing:
+1. Repository Tests: src/test/java/com/elasticDataQuery/repository/
+2. Utility Tests:  src/test/java/com/elasticDataQuery/common/
+3. Data Query Tests: src/test/java/com/elasticDataQuery/service/
+4. REST Controller tests: src/test/java/com/elasticDataQuery/web/
 
-Repository Tests:
-
-
-Utility Tests:
-
-
-Data Processing Tests:
-
-
-
-
-File Watcher tests:
-
-
-
-
-# Integration Testing:
+### Integration Testing:
 
 ** Pending
 
- - Reason: Embedded Elastic-Engine has issues in compatibility with Spring Dependencies
+- Reason: Embedded Elastic-Engine has issues in compatibility with Spring Dependencies
 
-Followup: Develop a maven plugin which starts/stops the Elastic-Engine for each integration test
+- Followup: Develop a maven plugin which starts/stops the Elastic-Engine for each integration test
+
+- How To: Integration testing using java test-container as mentioned in:
+
+   - https://gitlab.com/kanthgitlab/elasticsearch-integration-testing
+
+   - Source: https://www.testcontainers.org/usage/elasticsearch_container.html
 
 
 
