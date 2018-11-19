@@ -2,34 +2,42 @@
 
 API to query the Log-File Data from Elastic-Search-Engine
 
+# API Specifications:
 
-API end-point & URL:
+  ```
+   You can access swagger page here: http://localhost:8081/swagger-ui.html
+  ```
 
-http://localhost:<port_Configured_In_application.yaml>/isStringValid/string=
+# API end-point & URL:
 
-API Response:
+    http://localhost:<port_Configured_In_application.yaml>/isStringValid/string=
 
-If the string appears more than 5 times in the last 24 hours:
+   ## API Response:
 
-{"response" : false}
+     If the string appears more than 5 times in the last 24 hours:
 
-Else:
+      {"response" : false}
 
-{"response" : true}
+     Else:
 
-
-API Constraints:
-
-Query string length <=40
+       {"response" : true}
 
 
-Use Case:
+    ##API Constraints:
 
-Load Log File content to Elastic-Search Engine
+     Query string length <=40
 
-Purpose:
 
-Full-Text query to be performed to analyse text Data and generate analytics based on text match and timestamps
+# Use Case:
+
+```
+   Load Log File content to Elastic-Search Engine
+```
+
+# Purpose:
+```
+    Full-Text query to be performed to analyse text Data and generate analytics based on text match and timestamps
+```
 
 # Tech-Stack:
 
