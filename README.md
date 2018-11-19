@@ -67,6 +67,51 @@ API to query the Log-File Data from Elastic-Search-Engine
 
 Technical Flow:
 
+ - Elastic-Search java configuration Class:
+
+   ```
+   ElasticSearchConfig.java (com/elasticDataQuery/configuration)
+   ```
+
+   ```java
+       @Value("${spring.data.elasticsearch.host}")
+       private String esHost;
+
+       @Value("${spring.data.elasticsearch.port}")
+       private int esPort;
+
+       @Value("${spring.data.elasticsearch.cluster-name}")
+       private String esClusterName;
+
+       @Bean
+       public Client client() throws Exception {
+
+          Settings esSettings = Settings.builder()
+                   .put("client.transport.sniff", true)
+                   .put("client.transport.ignore_cluster_name", true)
+                  .put("cluster.name",esClusterName)
+                  .put("http.enabled", true)
+                   .build();
+
+           TransportClient client = new PreBuiltTransportClient(esSettings)
+                   .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(esHost), esPort));
+           return client;
+
+       }
+
+       @Bean
+       public ElasticsearchOperations elasticsearchTemplate() throws Exception {
+           log.info("elasticsearchTemplate building initiated");
+
+           ElasticsearchTemplate elasticsearchTemplate =
+                   new ElasticsearchTemplate(client());
+           log.info("elasticsearchTemplate build completed");
+
+           return elasticsearchTemplate;
+       }
+
+   ```
+
  - REST endpoint defined in :
 
    ```
@@ -116,6 +161,25 @@ Technical Flow:
       - No programmatic handling of designing or running distributed query
 
   ```java
+
+      /**
+       * match by word Content & the timeStamp >= deltaTimeInEpochMillis
+       *
+       * @param word
+       * @param deltaTimeInHours
+       * @return Collection of FileData Entities
+       */
+      @Override
+      public List<FileData> findByContentAndTimeLimit(String word, Long deltaTimeInHours) {
+
+          QueryBuilder qb = getQueryBuilderForContentAndTimeRank(word, deltaTimeInHours);
+
+          NativeSearchQuery build = new NativeSearchQueryBuilder()
+                  .withQuery(qb)
+                  .build();
+
+          return elasticsearchTemplate.queryForList(build, FileData.class);
+      }
 
       /**
        *
