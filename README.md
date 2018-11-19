@@ -73,6 +73,31 @@ Technical Flow:
    ElasticSearchConfig.java (com/elasticDataQuery/configuration)
    ```
 
+   ```js
+       server:
+         port: 8081
+
+       spring:
+         data:
+           elasticsearch:
+             cluster-name: elastic-cluster
+             cluster-nodes: localhost:9300
+             host: localhost
+             port: 9300
+             repositories:
+               enabled: true
+             properties:
+               http:
+                 enabled: true
+
+       xpack:
+         security:
+           enabled: false
+
+       search:
+         queryLimitInHours: 24
+   ```
+
    ```java
        @Value("${spring.data.elasticsearch.host}")
        private String esHost;
