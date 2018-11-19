@@ -55,7 +55,10 @@ API to query the Log-File Data from Elastic-Search-Engine
 
 # Functional Flow:
 
-- Provides an API endpoint: http://localhost:<port>/isStringValid?string={string}
+- Provides an API endpoint:
+    ```
+    http://localhost:<port>/isStringValid?string={string}
+    ```
 - The caller can only send a string of up to 40 characters
 - The API shall return a json in this format: ​{“response”: “true|false”}
     - If the string appears more than 5 times in the last 24 hours, return​ {“response”: “false”}
